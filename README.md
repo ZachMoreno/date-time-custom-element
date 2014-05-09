@@ -1,2 +1,2 @@
-# Date Time Custom Element
+# <date-time> Custom Element
 ## Built atop Polymer
