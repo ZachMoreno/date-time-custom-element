@@ -4,19 +4,77 @@
   <template>
     <style>
       /* styles for the custom element itself - lowest specificity */
-      :host { display: block; }
+      :host {
+        display: block;
+      }
+
+      small {
+        color: lightgrey;
+      }
       /* 
       style if an ancestor has the different class
       :host(.different) { } 
       */
     </style>
+
+    <date-time>
+      {{ hours }}:{{ minutes }} <small>{{ amPm }}</small>
+      {{ day }} / {{ month }} {{ date }} / {{ year }}
+    </date-time>
+
     <span>I'm <b>dateTime</b>. This is my Shadow DOM.</span>
   </template>
   <script>
     Polymer('date-time', {
+              function startTime() {
+          // constants
+          var week   = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+          var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        
+          // variables
+          var today   = new Date(),
+              hours24 = today.getHours(),           // military hours
+              hours   = ((hours24 + 11) % 12) + 1,  // standard hours
+              amPm    = hours24 > 11 ? 'pm' : 'am', // AM or PM
+              minutes = today.getMinutes(),         // minute
+              seconds = today.getSeconds(),         // second
+              date    = today.getDate(),            // day #
+              month   = months[today.getMonth()],   // month name
+              year    = today.getFullYear(),        // year
+              day     = week[today.getDay()];       // day name
+
+          // add a 0 in front of numbers < 10
+          minutes = checkTime(minutes);
+          seconds = checkTime(seconds);
+
+          // polymer data binding
+          this.day     = day;     // {{ day }}
+          this.month   = month;   // {{ month }}
+          this.date    = date;    // {{ date }}
+          this.year    = year;    // {{ year }}
+          this.hours   = hours;   // {{ hours }}
+          this.minutes = minutes; // {{ minutes }}
+          this.amPm    = amPm;    // {{ amPm }}
+
+          t = setTimeout(function() { startTime() }, 500);
+        }
+
+        // keep time === real-time
+        function checkTime(i) {
+          if(i<10) {
+            i = "0" + i;
+          }
+          return i;
+        }
+
+        // <date-time> element kicks of startTime function
+        this = startTime();
+
+
+      
       // element is fully prepared
       ready: function(){
-        
+
       },
 
       // instance of the element is created
@@ -35,7 +93,7 @@
       },
       // attribute added, removed or updated
       attributeChanged: function(attrName, oldVal, newVal) {
-        
+
       }
     });
   </script>
